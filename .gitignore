@@ -3,3 +3,4 @@ Build/
 Library/
 Temp/
 *.sln.DotSettings.user
+*.csproj.user
