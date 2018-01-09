@@ -1,0 +1,5 @@
+.vs/
+Build/
+Library/
+Temp/
+*.sln.DotSettings.user
