@@ -9,11 +9,12 @@ using SharpLogger;
 using VictoriaShared.Networking;
 using Logger = SharpLogger.Logger;
 
-public class Server : NetClient
+public class NetworkSocket : NetClient
 {
-    public Server(string host, int port, int bufferSize) : base(host, port, bufferSize)
+    private NetworkManager _networkManager = null;
+    public NetworkSocket(string host, int port, int bufferSize) : base(host, port, bufferSize)
     {
-        
+        _networkManager = NetworkManager.GetInstance();
     }
 
     protected override void HandleMessage(NetPacketBase packet)
@@ -24,11 +25,11 @@ public class Server : NetClient
             DataBlock dataBlock = new DataBlock(Encoding.ASCII.GetBytes(packet.Read<string>()));
 
             // -- Pass datablock to datablock controller
-            NetworkManager.GetInstance().ProcessDataBlock(dataBlock, null);
+            _networkManager.ProcessDataBlock(dataBlock);
         }
         catch (Exception e)
         {
-            Debug.LogError(e.StackTrace);
+            Logger.Log(LogLevel.L4_RecoverableError, "Error handling messge in NetworkSocket: " + e.StackTrace, "NetworkMessages.FromServer");
         }
         
     }

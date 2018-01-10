@@ -316,14 +316,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Code\Camera\CameraMovement.cs" />
-    <Compile Include="Assets\Code\Game\ClientGameStateManager.cs" />
-    <Compile Include="Assets\Code\Game\GameManager.cs" />
-    <Compile Include="Assets\Code\InputDetector.cs" />
-    <Compile Include="Assets\Code\Networking\ClientDataBlockController.cs" />
+    <Compile Include="Assets\Code\Configuration.cs" />
+    <Compile Include="Assets\Code\GameEntry.cs" />
+    <Compile Include="Assets\Code\Game\ClientGameState.cs" />
+    <Compile Include="Assets\Code\Game\InputDetector.cs" />
     <Compile Include="Assets\Code\Networking\NetworkManager.cs" />
-    <Compile Include="Assets\Code\Networking\Server.cs" />
+    <Compile Include="Assets\Code\Networking\NetworkSocket.cs" />
     <Compile Include="Assets\Code\Printer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

@@ -1,73 +1,108 @@
-﻿using Ether.Network;
+﻿using System;
+using Ether.Network;
+using VictoriaShared.Game;
 using VictoriaShared.Networking;
 
 public class NetworkManager
 {
-    private static NetworkManager instance = null;
+    private static NetworkManager _instance = null;
     public static NetworkManager GetInstance()
     {
-        if (instance == null)
-            instance = new NetworkManager();
+        if (_instance == null)
+            _instance = new NetworkManager();
 
-        return instance;
+        return _instance;
     }
     private NetworkManager()
     {
-        dataBlockController = new ClientDataBlockController();
-    }
+        _clientGameState = ClientGameState.GetInstance();
 
-    private DataBlockController dataBlockController;
+        if (Configuration.AutostartServer)
+        {
+            SetUpServerConnection();
+            ConnectToServer();
+        }
+    }
 
     private const string SERVER_IP = "127.0.0.1";
     private const int SERVER_PORT = 8888;
     private const int BUFFER_SIZE = 4096;
 
-    private Server server = null;
+    private NetworkSocket _networkSocket = null;
+    private ClientGameState _clientGameState = null;
 
     public void SetUpServerConnection()
     {
-        if (server != null)
+        if (_networkSocket != null)
             return;
 
-        server = new Server(SERVER_IP, SERVER_PORT, BUFFER_SIZE);
+        _networkSocket = new NetworkSocket(SERVER_IP, SERVER_PORT, BUFFER_SIZE);
     }
 
     public void ConnectToServer()
     {
-        if (server == null)
+        if (_networkSocket == null)
             return;
 
-        if (server.IsConnected)
+        if (_networkSocket.IsConnected)
             return;
 
-        server.Connect();
+        _networkSocket.Connect();
     }
 
     public void DisconnectFromServer()
     {
-        if (server == null)
+        if (_networkSocket == null)
             return;
 
-        if (!server.IsConnected)
+        if (!_networkSocket.IsConnected)
             return;
 
-        server.Disconnect();
-        server = null;
+        _networkSocket.Disconnect();
+        _networkSocket = null;
     }
 
     public void SendDataBlock(DataBlock dataBlock)
     {
-        if (server == null)
+        if (_networkSocket == null)
             return;
 
-        if (!server.IsConnected)
+        if (!_networkSocket.IsConnected)
             return;
 
-        server.SendDataBlock(dataBlock);
+        _networkSocket.SendDataBlock(dataBlock);
     }
 
-    public void ProcessDataBlock(DataBlock dataBlock, NetConnection netConnection)
+    /**
+     * This method is called when a message is received from the server, and has been converted to a datablock object.
+     *
+     * Datablocks are split into 4 groups.
+     *
+     * Check which group the datablock belongs to.
+     * Send Events and Actions to the GameState to deal with.
+     * Send Admin datablocks to the AdminManager to deal with.
+     */
+    public void ProcessDataBlock(DataBlock dataBlock)
     {
-        dataBlockController.ProcessDataBlock(dataBlock, netConnection);
+        // -- Admin
+        if (dataBlock.function < DataBlockFunction.ADMIN)
+        {
+            throw new NotImplementedException();
+        }
+        // -- Request
+        else if (dataBlock.function < DataBlockFunction.REQUEST)
+        {
+            throw new NotImplementedException();
+        }
+        // -- Action
+        else if (dataBlock.function < DataBlockFunction.ACTION)
+        {
+            _clientGameState.AddDatablockAction(dataBlock);
+        }
+        // -- Event
+        else
+        {
+            _clientGameState.AddDatablockEvent(dataBlock);
+        }
     }
 }
