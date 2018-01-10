@@ -1,8 +1,10 @@
-﻿using VictoriaShared.Game.NetworkObjects;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using SharpLogger;
 using UnityEngine;
+using VictoriaShared.Game.NetworkObjects;
+using Logger = SharpLogger.Logger;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +22,8 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        SharpLogger.Logger.SetPrinter(new Printer());
+        SharpLogger.Logger.SetFilter("");
         spawnQueue = new Queue<NetworkObject>();
         clientGameStateManager = ClientGameStateManager.GetInstance();
     }
@@ -32,7 +36,7 @@ public class GameManager : MonoBehaviour
     public void ObjectAdded(NetworkObject networkObject)
     {
         // -- Add Object to spawn queue
-        Debug.Log("Object added to spawn queue.");
+        Logger.Log(LogLevel.L2_Info, "GameManager: Adding object to spawn queue.", "Objects.Spawn.GameManager");
         spawnQueue.Enqueue(networkObject);
     }
     public void ObjectRemoved(uint id)
@@ -40,7 +44,7 @@ public class GameManager : MonoBehaviour
         if (!gameObjects.ContainsKey(id))
             return;
 
-        Debug.Log("Object removed!");
+        Logger.Log(LogLevel.L2_Info, "GameManager: Removing object from game.", "Objects.Despawn.GameManager");
 
         // -- Despawn Gameobject
         GameObject go = gameObjects[id];

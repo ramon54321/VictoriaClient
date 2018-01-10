@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VictoriaShared.Networking;
-using Ether.Network;
 using System;
+using Ether.Network;
+using SharpLogger;
+using VictoriaShared.Networking;
+using Logger = SharpLogger.Logger;
 
 public class ClientDataBlockController : DataBlockController
 {
@@ -29,12 +31,12 @@ public class ClientDataBlockController : DataBlockController
             // -- Console Log
             if (data[0] == "cl")
             {
-                Debug.Log("Server LOGS: " + data[1]);
+                Logger.Log(LogLevel.L2_Info, "Server Message: " + data[1], "NetworkMessages.FromServer");
             }
         }
         catch (Exception e)
         {
-            Debug.LogWarning("Error Parsing: " + dataBlock.body);
+            Logger.Log(LogLevel.L4_RecoverableError, "Error parsing message from server: " + dataBlock.body, "NetworkMessages.FromServer");
         }
     }
 }

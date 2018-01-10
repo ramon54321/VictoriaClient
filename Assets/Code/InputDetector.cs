@@ -1,9 +1,9 @@
-﻿using VictoriaShared.Networking;
-using VictoriaShared.Timeline;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VictoriaShared.Timeline;
+using VictoriaShared.Networking;
 
 public class InputDetector : MonoBehaviour
 {

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ether.Network;
 using Ether.Network.Packets;
+using SharpLogger;
 using VictoriaShared.Networking;
+using Logger = SharpLogger.Logger;
 
 public class Server : NetClient
 {
@@ -36,18 +38,20 @@ public class Server : NetClient
         using (NetPacket packet = new NetPacket())
         {
             // -- Create string from datablock bytes
-            packet.Write(Encoding.ASCII.GetString(dataBlock.GetBytes()));
+            string datablockString = Encoding.ASCII.GetString(dataBlock.GetBytes());
+            Logger.Log(LogLevel.L2_Info, "Sending datablock to server: " + datablockString, "NetworkMessages.FromClient");
+            packet.Write(datablockString);
             this.Send(packet);
         }
     }
 
     protected override void OnConnected()
     {
-        Debug.Log("Connected to " + this.Socket.RemoteEndPoint.ToString());
+        Logger.Log(LogLevel.L2_Info, "Connected to " + this.Socket.RemoteEndPoint.ToString(), "Network.Connect");
     }
 
     protected override void OnDisconnected()
     {
-        Debug.Log("Disconnected");
+        Logger.Log(LogLevel.L2_Info, "Disconnected.", "Network.Disconnect");
     }
 }
